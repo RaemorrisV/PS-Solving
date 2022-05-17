@@ -1,0 +1,35 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	vector<int> card;
+	vector<int> number;
+	int n, m;
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		int num;
+		cin >> num;
+		card.push_back(num);
+	}
+	sort(card.begin(), card.end());
+	cin >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int num;
+		cin >> num;
+		number.push_back(num);
+	}
+	for (int i = 0; i < number.size(); i++)
+	{
+		cout << (upper_bound(card.begin(), card.end(), number[i]) - card.begin()) - (lower_bound(card.begin(), card.end(), number[i]) - card.begin()) <<" ";
+	}
+	return 0;
+}
