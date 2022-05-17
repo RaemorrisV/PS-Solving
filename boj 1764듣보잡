@@ -1,0 +1,38 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	//cout.tie(NULL);
+	set<string> a;
+	set<string> b;
+	vector<string> s1s2_intsec;
+	int n, m;
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) //n
+	{
+		string num;
+		cin >> num;
+		a.insert(num);
+	}
+	for (int i = 0; i < m; i++) //m
+	{
+		string num;
+		cin >> num;
+		b.insert(num);
+	}
+	set_intersection(a.begin(), a.end(),
+		b.begin(), b.end(),
+		back_inserter(s1s2_intsec));
+	cout << s1s2_intsec.size() << endl;
+	for (const auto& item : s1s2_intsec) {
+		cout << item <<endl;
+	}
+	return 0;
+}
