@@ -1,0 +1,35 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	//cout.tie(NULL);
+	set<int> a;
+	set<int> b;
+	vector<int> s1s2_intsec;
+	int n, m;
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) //n
+	{
+		int num;
+		cin >> num;
+		a.insert(num);
+	}
+	for (int i = 0; i < m; i++) //m
+	{
+		int num;
+		cin >> num;
+		b.insert(num);
+	}
+	set_symmetric_difference(a.begin(), a.end(),
+		b.begin(), b.end(),
+		back_inserter(s1s2_intsec));
+	cout << s1s2_intsec.size() << endl;
+	return 0;
+}
