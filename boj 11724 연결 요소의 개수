@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+using namespace std;
+
+bool visit[1001];
+int cnt = 0;
+vector<vector<int>>ad_list(1001);
+queue<int> Q;
+void dfs(int start)
+{
+	visit[start] = true;
+	for (auto v : ad_list[start])
+	{
+		if (visit[v] == false)
+		{
+			dfs(v);
+		}
+	}
+
+}
+void bfs(int start)
+{
+	Q.push(start);
+	visit[start] = true;
+	while (!Q.empty())
+	{
+		int z = Q.front();
+		Q.pop();
+		for (auto v : ad_list[z])
+		{
+			if (visit[v] == false)
+			{
+				visit[v] = true;
+				Q.push(v);
+
+			}
+		}
+	}
+
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	int n, m;//정점의 개수 간선
+	cin >> n >> m;
+	for (int i = 0; i < m; i++)
+	{
+		int s, t;
+		cin >> s >> t;
+		ad_list[s].push_back(t);
+		ad_list[t].push_back(s);
+	}
+	for (auto& neighbor : ad_list)
+	{
+		sort(neighbor.begin(), neighbor.end());
+	}
+	for (int i = 1; i<=n; i++)
+	{
+		if (visit[i] == false)
+		{
+			cnt++;
+			bfs(i);
+		}	
+	}
+	cout << cnt;
+	return 0;
+}
