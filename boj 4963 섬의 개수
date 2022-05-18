@@ -1,0 +1,82 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <string>
+#include <cstring>
+using namespace std;
+
+bool visit[50][50];
+int cnt = 0;
+int w, h;
+int ad_list[50][50];//2차원 배열 설정
+queue<pair<int,int>> Q;
+int dx[8] = {-1,1,0,0,-1,1,-1,1};//행  상하 좌우↗ ↘ ↖ ↙
+int dy[8] = {0,0,-1,1,1,1,-1,-1};//열
+bool valid(int s, int t)//행 열
+{
+	if (s >= 0 && t >= 0 && s < h && t < w)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void bfs(int s,int t)
+{
+	Q.push({s ,t});
+	visit[s][t] = true;
+	while (!Q.empty())
+	{
+		int z = Q.front().first;
+		int y = Q.front().second;
+		Q.pop();
+		for (int i=0;i<8;i++)
+		{
+			if (visit[z + dx[i]][y+dy[i]] == false && valid(z + dx[i], y + dy[i])&&ad_list[z + dx[i]][y + dy[i]]==1)
+			{
+				visit[z + dx[i]][y + dy[i]] = true;
+				Q.push({ z + dx[i],y + dy[i] });
+			}
+		}
+	}
+
+}
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	while (true)
+	{ 
+		cin >> w >> h; //열 행
+		if (w == 0 && h == 0)break;	
+		for (int i = 0; i < h; i++)//행
+		{
+			for (int j = 0; j < w; j++)//열
+			{
+				int s;
+				cin >> s;
+				ad_list[i][j] = s;
+			}
+		}
+		for (int i = 0; i < h; i++)//행
+		{
+			for (int j = 0; j < w; j++)//열
+			{
+				if (visit[i][j] == false && ad_list[i][j]==1)
+				{
+					cnt++;
+					bfs(i, j);
+				}
+			}
+		}
+		cout<< cnt << "\n";
+		memset(visit, false, sizeof(visit));
+		memset(ad_list, 0, sizeof(ad_list));
+		cnt = 0;
+	}
+	return 0;
+}
