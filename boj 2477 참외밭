@@ -1,0 +1,80 @@
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+int main()
+{
+	int k;
+	int i = 0;
+	vector<pair<int, int>> q;
+	cin >> k;
+	int width, heigh;
+	int minwidth, minheight;
+	int dir, length;
+	cin >> dir >> length;
+	q.push_back({ dir,length });
+	width = 0; //동1  서2 
+	heigh = 0; //남3  북4	
+	if (dir == 3 || dir == 4)
+	{
+		if (width < length )
+		{
+		  width = length;
+		}
+	}
+	else if (dir == 1 || dir == 2)
+	{
+		if (heigh < length)
+		{
+			heigh = length;
+		}
+	}
+		
+	while (i != 5)
+	{
+		int dir, length;
+		cin >> dir >> length;
+		q.push_back({ dir,length });
+		if (dir == 3 || dir == 4) // 남 북
+		{
+			if (width < length)
+			{
+				width = length;
+			}
+		}
+		else if (dir == 1 || dir == 2) //동 서
+		{
+			if (heigh < length)
+			{
+				heigh = length;
+			}
+		}
+		i++;
+	}
+	for (int j = 0; j < 6; j++)
+	{
+		q.push_back({ q[j].first,q[j].second });
+	}
+	for (int j = 0; j < 6; j++)
+	{
+		if (width == q[j].second)
+		{
+			if (q[j + 1].second ==  heigh)
+			{
+				minheight = q[j + 3].second;
+				minwidth = q[j + 4].second;
+			}
+			else
+			{
+				minheight = q[j + 3].second;
+				minwidth = q[j + 2].second;
+			}
+		}
+	}
+	
+	cout << ((width * heigh) - (minheight * minwidth)) * k << endl;
+
+	return 0;
+}
