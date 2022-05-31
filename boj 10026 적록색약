@@ -1,0 +1,135 @@
+#include <iostream>
+#include <cstring>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+int no_color_blindness;
+int color_blindness;
+bool visit[100][100];
+char graph[100][100];
+int n;
+int dx[4] = {-1,1,0,0}; //상하좌우 순
+int dy[4] = {0,0,-1,1};
+bool valid(int row, int col)
+{
+	if (row < n && col < n && row >= 0 && col >= 0 )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+void bfs(int row, int col, char color, int check)
+{
+	queue<pair<int, int>>q;
+	q.push({ row,col });
+	while (!q.empty())
+	{
+		int a, b;
+		a = q.front().first;
+		b = q.front().second;
+		q.pop();
+		for (int i = 0; i < 4; i++)
+		{
+			if (check == 0)
+			{
+				if (valid(a + dx[i], b + dy[i]) && (visit[a + dx[i]][b + dy[i]] == false) && (graph[a + dx[i]][b + dy[i]] == color))
+				{
+					q.push({ a + dx[i], b + dy[i] });
+					visit[a + dx[i]][b + dy[i]] = true;
+				}
+			}
+			else if (check == 1)
+			{
+				if (color == 'R')
+				{
+					if (valid(a + dx[i], b + dy[i]) && (visit[a + dx[i]][b + dy[i]] == false) && ((graph[a + dx[i]][b + dy[i]] == 'R') || (graph[a + dx[i]][b + dy[i]] == 'G')))
+					{
+						q.push({ a + dx[i], b + dy[i] });
+						visit[a + dx[i]][b + dy[i]] = true;
+
+					}
+				}
+				else if(color=='B')
+				{
+					if (valid(a + dx[i], b + dy[i]) && (visit[a + dx[i]][b + dy[i]] == false) && (graph[a + dx[i]][b + dy[i]] == color))
+					{
+						q.push({ a + dx[i], b + dy[i] });
+						visit[a + dx[i]][b + dy[i]] = true;
+					}
+				}
+
+			}
+		}
+	}
+}
+int main()
+{
+	int count = 0;
+	int check = 0;
+	cin >> n;
+	for (int i = 0; i < n; i++)//행
+	{
+		for (int j = 0; j < n; j++)//열
+		{
+			char a;
+			cin >> a;
+			graph[i][j] = a;
+	    }
+	}
+	while (count!=2)
+	{	
+		for (int i = 0; i < n; i++)//행
+		{
+			for (int j = 0; j < n; j++)//열
+			{
+				if (check == 0)
+				{
+					if (visit[i][j] == false && graph[i][j] == 'R')
+					{
+						visit[i][j] = true;
+						bfs(i, j, 'R',check);
+						no_color_blindness++;
+					}
+					else if (visit[i][j] == false && graph[i][j] == 'G')
+					{
+						visit[i][j] = true;
+						bfs(i, j, 'G',check);
+						no_color_blindness++;
+					}
+					else if (visit[i][j] == false && graph[i][j] == 'B')
+					{
+						visit[i][j] = true;
+						bfs(i, j, 'B', check);
+						no_color_blindness++;
+					}
+				}
+				else if (check == 1)
+				{
+					if (visit[i][j] == false && (graph[i][j] == 'R'|| graph[i][j] == 'G'))
+					{
+						visit[i][j] = true;
+						bfs(i, j, 'R', check);
+						color_blindness++;
+					}
+					else if (visit[i][j] == false && graph[i][j] == 'B')
+					{
+						visit[i][j] = true;
+						bfs(i, j,'B',check);
+						color_blindness++;
+					}
+				}
+			}
+		}
+		count++;
+		check = 1;
+		memset(visit, false, sizeof(visit));
+	}
+	cout << no_color_blindness << " " << color_blindness;
+	return 0;
+}
