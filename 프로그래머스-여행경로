@@ -1,0 +1,43 @@
+#include <string>
+#include <vector>
+#include <map>
+#include <algorithm>
+using namespace std;
+
+vector<string> answer;
+int cnt=0;
+
+void dfs(string start,map<string,vector<pair<string,bool>>>&airport,int check)
+{   
+     for(int i=0;i<airport[start].size();i++)
+      {
+          if(airport[start][i].second==false)
+          {
+              airport[start][i].second=true;
+              answer.push_back(airport[start][i].first);
+              cnt++;
+              dfs(airport[start][i].first,airport,check);
+              if(cnt!=check)
+              {
+                  answer.erase(answer.end() - 1);
+                  cnt--;
+                  airport[start][i].second=false;
+              }
+          }
+      }
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+    map<string,vector<pair<string,bool>>>airport;
+    for(int i=0;i<tickets.size();i++)
+    {
+        airport[tickets[i][0]].push_back({tickets[i][1],false});
+    }
+    for(int i=0;i<tickets.size();i++)
+    {
+         sort(airport[tickets[i][0]].begin(),airport[tickets[i][0]].end());
+    }
+    answer.push_back("ICN");
+    dfs("ICN",airport,tickets.size());
+    return answer;
+}
