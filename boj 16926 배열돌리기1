@@ -1,0 +1,84 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+int w, k, r;
+int arr[301][301];
+int main()
+{    
+	cin >> w >> k >> r;
+	for (int i = 1; i <= w; i++)
+	{
+		for (int j = 1; j <= k; j++)
+		{
+			cin >> arr[i][j];
+		}
+	}
+	for (int i = 0; i < r; i++)
+	{
+		int n = w;
+		int m = k;
+		int x = 1;
+		int y = 1;
+	  while (1)
+	  {
+		  int temp = arr[x + n - 1][y];//4 1
+		  for(int j = x+n-1; j>x; j--)
+		  {		  
+			  arr[j][y] = arr[j - 1][y];
+           }
+		  int temp2 = arr[x + n - 1][y + m - 1];//기존 4 5
+		  for (int j = y + m - 1; j > y; j--) //5 >>>> 1 
+		  {
+			  if (j == y + 1)
+			  {
+				  arr[x + n - 1][j] = temp;
+			  }
+			  else
+			  {
+				  arr[x + n - 1][j] = arr[x + n - 1][j - 1];
+			  }
+		  }
+		  int temp3 = arr[x][y + m - 1]; //  기존 1 5
+		  for(int j =x;j< x + n - 1;j++) //1 2 3 
+		  {
+			  if (j == x + n - 2)//3
+			  {
+				  arr[j][y + m - 1] = temp2;
+			  }
+			  else
+			  {
+				  arr[j][y + m - 1] = arr[j + 1][y + m - 1];
+			  }
+		  }
+		  for (int j=y;j< y + m - 1;j++)
+		  {
+			  if (j == y + m - 2)
+			  {
+				  arr[y][j] = temp3;
+			  }
+			  else
+			  {
+				  arr[y][j] = arr[y][j+1];
+			  }
+		  }
+		  n = n - 2;
+		  m = m - 2;
+		  x += 1;
+		  y += 1;
+		  if (n < 2 || m < 2)
+			  break;
+	  }
+	}
+	for (int i = 1; i <= w; i++)
+	{
+		for (int j = 1; j <= k; j++)
+		{
+			cout<<arr[i][j]<<" ";
+		}
+		cout << endl;
+	}
+
+	return 0;
+}
