@@ -1,0 +1,118 @@
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<tuple>
+#include<cmath>
+#include<cstring>
+using namespace std;
+
+int dx[5] = { 0,0,1,0,-1 }; //x좌표   0=이동하지 않음 1 상 2 우 3 하 4 좌
+int dy[5] = { 0,-1,0,1,0 }; //y좌표
+int T, m, a;
+int ans = 0;
+int A[101];
+int B[101];
+vector<tuple<int, int, int, int>>BC_info; //좌표 충전범위, 처리량
+pair<int, int>A_location;
+pair<int, int>B_location;
+int Manhattan(int a, int b, int c, int d)
+{
+    return abs(a - c) + abs(b - d);
+}
+void counting(int d_a, int d_b)
+{
+    int max = 0;
+    int check = 0;
+    int check2 = 0;
+    for (int i = 0; i < a; i++) //A 위치 부터
+    {
+        if (Manhattan(A_location.first, A_location.second, get<0>(BC_info[i]), get<1>(BC_info[i])) <= get<2>(BC_info[i]))
+        {
+            check++;
+            for (int j = 0; j < a; j++)
+            {
+                if (Manhattan(B_location.first, B_location.second, get<0>(BC_info[j]), get<1>(BC_info[j])) <= get<2>(BC_info[j]))
+                {
+                    check2++;
+                    if (i == j)//두개가 겹쳤을 경우
+                    {
+                        if (max < (get<3>(BC_info[i]) + get<3>(BC_info[j])) / 2)
+                        {
+                            max = (get<3>(BC_info[i]) + get<3>(BC_info[j])) / 2;
+                        }
+                    }
+                    else  if(i != j)//겹치지 않았을 경우임
+                    {
+                        if (max < (get<3>(BC_info[i]) + get<3>(BC_info[j])))
+                        {
+                            max = get<3>(BC_info[i]) + get<3>(BC_info[j]);
+                        }
+                    }
+                }
+            }
+            if (check2 == 0)//A는 접속 할수 있는 BC가 있음 B는 접속할 수 있는 BC가 없음
+            {
+                if (max < get<3>(BC_info[i]))
+                {
+                    max = get<3>(BC_info[i]);
+                }
+            }
+        }
+    }
+    if (check == 0)//A 가 접속할수 있는 BC 가 없음
+    {
+        for (int k = 0; k < a; k++)
+        {
+            if (Manhattan(B_location.first, B_location.second, get<0>(BC_info[k]), get<1>(BC_info[k])) <= get<2>(BC_info[k]))
+            {
+                if (max < get<3>(BC_info[k]))
+                {
+                    max = get<3>(BC_info[k]);
+                }
+            }
+        }
+    }
+    ans += max;
+    //cout <<"???"<< max << endl;
+}
+int main()
+{
+    cin >> T;
+    for (int i = 0; i < T; i++)
+    {
+        A_location = { 1,1 };
+        B_location = { 10,10 };
+        cin >> m >> a; //총 이동시간과 BC의 개수
+
+
+        for (int j = 1; j <= m; j++) //A B 의 이동 정보들
+        {
+            cin >> A[j];
+        }
+        for (int j = 1; j <= m; j++)
+        {
+            cin >> B[j];
+        }
+        for (int j = 0; j < a; j++)
+        {
+            int a2, b2, c2, d2;
+            cin >> a2 >> b2 >> c2 >> d2; // 좌표, 충전 범위, 처리량
+            BC_info.push_back(make_tuple(a2, b2, c2, d2));
+        }
+        for (int j = 0; j <=m; j++)
+        {
+            A_location.first += dx[A[j]];
+            A_location.second += dy[A[j]];
+            B_location.first += dx[B[j]];
+            B_location.second += dy[B[j]];
+            counting(A[j], B[j]);
+         
+        }
+        cout << "#" << i + 1 << " " << ans << endl;
+        BC_info.clear();
+        memset(A, 0, sizeof(A));
+        memset(B, 0, sizeof(B));
+        ans = 0;
+    }
+    return 0;
+}
