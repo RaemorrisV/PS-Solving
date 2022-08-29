@@ -1,0 +1,199 @@
+#include<iostream>
+#include<cmath>
+#include<vector>
+#include<tuple>
+#include<cmath>
+#include<cstring>
+#include<algorithm>
+#include<queue>
+using namespace std;
+
+int dx[4] = { -1,1,0,0}; //상 하 좌 우  행 
+int dy[4] = { 0,0,-1,1}; //열
+int cnt = 0;
+int n;
+int eat_count = 0;
+int space[20][20];
+int dis[20][20];
+vector<tuple<int, int, int>>fish;
+tuple<int, int, int>shark; //상어 좌표 크기
+queue<pair<int, int>>Q;
+vector<tuple<int, int, int>>p_fish;
+bool visited[20][20];
+bool valid(int x, int y)
+{
+    if (x >=0 && y >=0 && x < n && y < n)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+int bfs(int des_x,int des_y) //인자로 목표를 넣어주면 되지 않을까 생각중.. 
+{
+    while (!Q.empty())
+    {
+        int x = Q.front().first; //상어 위치 x
+        int y = Q.front().second; //y 
+        if (x == des_x && y  == des_y)
+        {
+            while (!Q.empty())
+            {
+                Q.pop();
+            }
+            return dis[x][y];
+        }
+        Q.pop();
+        for (int i = 0; i < 4; i++)
+        { 
+            if (space[x + dx[i]][y + dy[i]] == 0)
+            {              
+                if (valid(x + dx[i], y + dy[i]) && visited[x + dx[i]][y + dy[i]]==false )
+                {
+                    visited[x + dx[i]][y + dy[i]] = true;
+                    Q.push({ x + dx[i], y + dy[i] });
+                    dis[x + dx[i]][y + dy[i]] = dis[x][y] + 1;
+                }
+            }
+            else if (space[x + dx[i]][y + dy[i]] != 9 && space[x + dx[i]][y + dy[i]] != 0)
+            {
+                if (valid(x + dx[i], y + dy[i]) && visited[x + dx[i]][y + dy[i]]==false && get<2>(shark) >= space[x + dx[i]][y + dy[i]])
+                {
+                    visited[x + dx[i]][y + dy[i]] = true;
+                    Q.push({ x + dx[i], y + dy[i] });
+                    dis[x + dx[i]][y + dy[i]] = dis[x][y] + 1;
+                }
+            }
+
+        }
+    }
+    return 1000000;
+    
+}
+int main()
+{
+    cin >> n;
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cin >> space[i][j]; //총 이동시간과 BC의 개수
+            if (space[i][j]==9)
+            {
+                shark=make_tuple(i, j, 2);
+                Q.push({ i,j });
+                space[i][j] = 0;
+                visited[i][j] = true;
+            }
+            else if (space[i][j] != 9 && space[i][j] != 0)
+            {
+                fish.push_back(make_tuple(i, j, space[i][j]));
+                //cout<< "정보체크"<< i << " " << j << " " << space[i][j] << endl;
+            }
+        }
+    }
+    while (1)
+    {
+        //cout << "상어크기" << get<2>(shark) << endl;
+        for (int i = 0; i < fish.size(); i++)
+        {
+            if ((get<2>(shark) > get<2>(fish[i]))&& (space[get<0>(fish[i])][get<1>(fish[i])]!=0))
+            {
+                p_fish.push_back(make_tuple(get<0>(fish[i]), get<1>(fish[i]), get<2>(fish[i])));
+                //cout << "가능한 물고기" << get<0>(fish[i]) << " " << get<1>(fish[i]) << endl;
+          }
+        }
+        if (p_fish.size() == 0)break;
+        else if (p_fish.size() == 1)
+        {
+            //cout << "여긴 맞음"<< get<0>(p_fish[0])<<" " << get<1>(p_fish[0]) << endl;
+            int a = bfs(get<0>(p_fish[0]), get<1>(p_fish[0]));
+            memset(visited, 0, sizeof(visited));
+            memset(dis, 0, sizeof(dis));
+            get<0>(shark) = get<0>(p_fish[0]);
+            get<1>(shark) = get<1>(p_fish[0]);
+            Q.push({ get<0>(shark), get<1>(shark) });
+            visited[get<0>(p_fish[0])][get<1>(p_fish[0])] = true;
+            if (a == 1000000)break;
+            cnt += a;
+            eat_count++;
+            space[get<0>(p_fish[0])][get<1>(p_fish[0])] = 0;
+            if (eat_count == get<2>(shark))
+            {
+                get<2>(shark)+=1;
+                eat_count = 0;
+            }
+            p_fish.clear();
+            
+        }
+        else if (p_fish.size() >= 2)
+        {
+            int min = 100000;
+            for (int i = 0; i < p_fish.size(); i++)//최솟값 구하는 부분임
+            {
+                int f = bfs(get<0>(p_fish[i]), get<1>(p_fish[i]));
+                //cout << "확인해보자" << get<0>(p_fish[i]) << " " << get<1>(p_fish[i]) << " " << bfs(get<0>(p_fish[i]), get<1>(p_fish[i])) << endl;
+                if (min > f)
+                {
+                   // cout << "Fds" << min << endl;
+                    min = f;
+                  //  cout << "a" << min << endl;
+                    
+                }
+                Q.push({ get<0>(shark),get<1>(shark) });
+                memset(visited, 0, sizeof(visited));
+                memset(dis, 0, sizeof(dis));
+            }
+            //cout << "최소거리" << min<< endl;
+            if (min == 100000)break;
+            int min_x=21;
+            int min_y=21;
+            for (int i = 0; i < p_fish.size(); i++)
+            {
+                if (min == bfs(get<0>(p_fish[i]), get<1>(p_fish[i])))
+                {
+                    if (min_x > get<0>(p_fish[i]))
+                    {
+                        min_x = get<0>(p_fish[i]);
+                        min_y = get<1>(p_fish[i]);
+                    }
+                    else if (min_x == get<0>(p_fish[i]))
+                    {
+                        if (min_y > get<1>(p_fish[i]))
+                        {
+                            min_y = get<1>(p_fish[i]);
+                        }
+                    }
+                }
+                Q.push({ get<0>(shark),get<1>(shark) });
+                memset(visited, 0, sizeof(visited));
+                memset(dis, 0, sizeof(dis));
+            }
+            Q.pop();
+           // cout << "ad" << Q.size()<<" "<< endl;
+           //cout << "이거" << min_x << " " << min_y <<endl;
+            
+            get<0>(shark) = min_x;
+            get<1>(shark) =min_y;
+            Q.push({ get<0>(shark), get<1>(shark) });
+            memset(visited, 0, sizeof(visited));
+            memset(dis, 0, sizeof(dis));
+            visited[get<0>(shark)][get<1>(shark)] = true;
+            space[get<0>(shark)][get<1>(shark)] = 0;
+            eat_count++;
+            cnt += min;
+            //cout<<"합계" << cnt << endl;
+            if (eat_count == get<2>(shark))
+            {
+                get<2>(shark) += 1;
+                eat_count = 0;
+            }
+           // cout << "크기" << get<2>(shark) << " " << eat_count << endl;
+            p_fish.clear();
+        }
+    }
+    cout << cnt << endl;
+    return 0;
+}
