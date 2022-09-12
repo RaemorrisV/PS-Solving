@@ -1,0 +1,147 @@
+#include<iostream>
+#include<vector>
+#include<tuple>
+using namespace std;
+
+vector<pair<int, char>>info;
+vector<tuple<char,int, int>>snake;
+int n, k, L;
+int board[101][101];
+char turn_board[101][101];
+int ans = 0;
+int dx[4] = {-1,1,0,0};//상하좌우 순 u d l r
+int dy[4] = { 0,0,-1,1 };
+bool valid(int row, int col)
+{
+	if (row >= 1 && col>= 1&& row<=n && col<=n)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool meet_me(int row, int col)
+{
+	for (int i = 1; i < snake.size(); i++)
+	{
+		if (row == get<1>(snake[i]) && col == get<2>(snake[i]))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+int main()
+{
+	cin >> n;
+	cin >> k;
+	snake.push_back({'r',1,1 }); //초기에는 (1,1)시작 하고 오른쪽으로 진행함...
+	for (int i = 0; i < k; i++)
+	{
+		int r, c;
+		cin >> r >> c;
+		board[r][c] = 9;//사과가 있는 곳
+	}
+	cin >> L;
+	for (int i = 0; i < L; i++)
+	{
+		int t;
+		char c;
+		cin >> t >> c;
+		info.push_back({ t,c });//뱀의 방향 변환 정보
+	}
+	//L 이면 왼쪽 D 면 오른쪽으로 90도 방향을 회전시킨다.
+	while (1)
+	{
+		for (int i = 0; i < L; i++)
+		{
+			if (ans == info[i].first)
+			{
+				if (info[i].second == 'L')//왼쪽으로 90도
+				{
+					if (get<0>(snake[0]) == 'u')// 좌로 틈
+					{
+						get<0>(snake[0]) = 'l';
+					}
+					else if (get<0>(snake[0]) == 'd')//오른쪽으로 틈
+					{
+						get<0>(snake[0]) = 'r';
+					}
+					else if (get<0>(snake[0]) == 'l')//아래로 틈
+					{
+						get<0>(snake[0]) = 'd';
+					}
+					else if (get<0>(snake[0]) == 'r')//위로 틈
+					{
+						get<0>(snake[0]) = 'u';
+					}
+				}
+				else if (info[i].second == 'D')//오른쪽으로 90도
+				{
+					if (get<0>(snake[0]) == 'u')//오른쪽으로 틈
+					{
+						get<0>(snake[0]) = 'r';
+					}
+					else if (get<0>(snake[0]) == 'd')//좌로 틈
+					{
+						get<0>(snake[0]) = 'l';
+					}
+					else if (get<0>(snake[0]) == 'l')//위로틈
+					{
+						get<0>(snake[0]) = 'u';
+					}
+					else if (get<0>(snake[0]) == 'r')//아래로 틈
+					{
+						get<0>(snake[0]) = 'd';
+					}
+				}
+			}
+		}
+		char temp_dir = get<0>(snake[0]);//머리의 초기 정보 저장
+		int temp_row = get<1>(snake[0]);
+		int temp_col = get<2>(snake[0]);			//뱀이 머리를 늘리는 부분임
+		if (get<0>(snake[0]) == 'u')//이동방향 위 
+		{
+			ans++;
+			get<1>(snake[0]) += dx[0];
+			get<2>(snake[0]) += dy[0];
+			if (!valid(get<1>(snake[0]), get<2>(snake[0]))|| meet_me(get<1>(snake[0]), get<2>(snake[0])))break;
+		}
+		else if (get<0>(snake[0]) == 'd')//아래
+		{
+			ans++;
+			get<1>(snake[0]) += dx[1];
+			get<2>(snake[0]) += dy[1];
+			if (!valid(get<1>(snake[0]), get<2>(snake[0])) || meet_me(get<1>(snake[0]), get<2>(snake[0])))break;
+		}
+		else if (get<0>(snake[0]) == 'l')//좌 
+		{
+			ans++;
+			get<1>(snake[0]) += dx[2];
+			get<2>(snake[0]) += dy[2];
+			if (!valid(get<1>(snake[0]), get<2>(snake[0])) || meet_me(get<1>(snake[0]), get<2>(snake[0])))break;
+		}
+		else if (get<0>(snake[0]) == 'r')//우
+		{
+			ans++;
+			get<1>(snake[0]) += dx[3];
+			get<2>(snake[0]) += dy[3];
+			if (!valid(get<1>(snake[0]), get<2>(snake[0])) || meet_me(get<1>(snake[0]), get<2>(snake[0])))break;
+		}
+
+		if (board[get<1>(snake[0])][get<2>(snake[0])] == 9)//사과가 있을 경우
+		{
+			board[get<1>(snake[0])][get<2>(snake[0])] = 0; //먹어 치우고
+			snake.push_back({temp_dir ,temp_row ,temp_col});
+		}
+		else if (board[get<1>(snake[0])][get<2>(snake[0])] == 0)// 사과가 없을 경우
+		{
+			snake.push_back({ temp_dir ,temp_row ,temp_col });
+			snake.erase(snake.begin()+1);
+		}	
+	}
+	cout << ans;
+	return 0;
+}
