@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+int USADO[5001][5001];
+bool visited[5001];
+int Min[5001];
+vector<int>gragh[5001];
+int N;
+int Q;
+int ans;
+queue<int>q;
+int k,v;
+void bfs(int start)
+{
+  q.push(start);
+  visited[start]=true;
+  while(!q.empty())
+  {
+     int s=q.front();
+     q.pop();
+     for(int i=0;i<gragh[s].size();i++)
+     {
+        int next=gragh[s][i];
+        if(visited[next]==false)
+        {
+           int check=USADO[s][next];
+           
+           if(Min[s]>check)
+           {
+              Min[next]=check;
+           }
+           else
+           {
+             Min[next]=Min[s];
+           }
+           if(Min[next]>=k)ans++;
+            q.push(next);
+            visited[next]=true;
+        }
+     }
+  }
+}
+int main()
+{
+    cin>>N>>Q;
+    for(int i=0;i<N-1;i++)
+    {
+       int s,e,u;
+       cin>>s>>e>>u;
+       gragh[s].push_back(e);
+       gragh[e].push_back(s);
+       USADO[s][e]=u;
+       USADO[e][s]=u;
+    }
+    for(int i=0;i<Q;i++)
+    {
+         cin>>k>>v;
+         fill(Min,Min+N+1,1000000001);
+         memset(visited,false,sizeof(visited));
+         bfs(v);
+        cout<<ans<<endl;
+        ans=0;
+    }
+    return 0;
+}
