@@ -1,0 +1,61 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+int T;
+string w;
+int k;
+int MIN = 100001;
+int MAX = -1;
+unordered_map<char, pair<int, vector<int>>>str;
+int main()
+{
+    cin >> T;
+    for (int i = 0; i < T; i++)
+    {
+        cin >> w >> k;
+        for (int j = 0; j < w.length(); j++)
+        {
+            if (str.find(w[j]) == str.end())
+            {
+                str.insert({ w[j],{1,{j}} });
+            }
+            else
+            {
+                str[w[j]].first++;//counting
+                str[w[j]].second.push_back(j);//add an index
+            }
+        }
+        for (auto it : str)
+        {         
+            if (it.second.first >= k)
+            {
+                for (int j = 0; j < it.second.second.size()-k+1; j++)
+                {
+                    if (MIN > (it.second.second[j+k-1] - it.second.second[j]) + 1)
+                    {
+                        MIN = (it.second.second[j+k-1] - it.second.second[j]) + 1;
+                    }
+                    if (MAX < (it.second.second[j+k-1] - it.second.second[j]) + 1)
+                    {
+                        MAX = (it.second.second[j+k-1] - it.second.second[j]) + 1;
+                    }
+                }      
+            }        
+        }
+        if (MIN != 100001 && MAX != -1)
+        {
+            cout << MIN << " " << MAX << endl;
+        }
+        else
+        {
+            cout << "-1" << endl;
+        }
+        MIN = 100001;
+        MAX = -1;
+        str.clear();
+    }
+    return 0;
+}
