@@ -1,0 +1,131 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#pragma warning(disable: 4996)
+
+using namespace std;
+int first[8];//12시 부터 시계방향 순서대로 주어짐 N=0 S=1 
+int second[8];
+int third[8];
+int fourth[8];
+int k;
+int num[100];
+int dir[100];
+int total_dir[4];
+int ans;
+vector<int>tool[4];//0 회전안됨 1시계 방향 -1반시계 방향 
+void rotate(int index, int dir)
+{
+    if (dir == 1) //시계방향
+    {
+        int temp = tool[index][7];
+        for (int i = 7; i >= 1; i--)
+        {
+            tool[index][i] = tool[index][i - 1];
+        }
+        tool[index][0] = temp;
+    }
+    else if (dir == -1)//반시계방향
+    {
+        int temp = tool[index][0];
+        for (int i = 1; i <= 7; i++)
+        {
+            tool[index][i - 1] = tool[index][i];
+        }
+        tool[index][7] = temp;
+    }
+}
+void output()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        if (tool[i][0] == 1) // N극은
+        {
+            if (i == 0) { ans++; }
+            else if (i == 1)
+            {
+                ans += 2;
+            }
+            else if (i == 2)
+            {
+                ans += 4;
+            }
+            else if (i == 3)
+            {
+                ans += 8;
+            }
+        }
+    }
+    cout << ans << endl;
+}
+
+int main()
+{
+    for (int i = 0; i < 8; i++)
+    {
+        scanf("%1d", &first[i]);
+        tool[0].push_back(first[i]);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        scanf("%1d", &second[i]);
+        tool[1].push_back(second[i]);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        scanf("%1d", &third[i]);
+        tool[2].push_back(third[i]);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        scanf("%1d", &fourth[i]);
+        tool[3].push_back(fourth[i]);
+    }
+    cin >> k;
+    for (int i = 0; i < k; i++)
+    {
+        cin >> num[i] >> dir[i];
+    }
+    //여기부터 구현을 시작하면 됨
+    for (int i = 0; i < k; i++)
+    {
+        int forward = num[i]-1;
+        int backward = num[i]-1;//2
+        total_dir[num[i]-1] = dir[i];
+        while (1)
+        {
+            if (forward < 0 && backward > 3)break;
+            forward--;
+            backward++;
+            if (forward >= 0) //앞쪽을 책임 지는 녀석
+            {
+                if (tool[forward + 1][6] == tool[forward][2])//극이 같다면 회전 하지않음
+                {
+                    forward = 0;
+                }
+                else //극이 다르다면요
+                {
+                    total_dir[forward] = -total_dir[forward + 1];
+                }
+            }
+            if (backward <= 3) //뒤쪽을 책임 지는 녀석임
+            {
+                if (tool[backward - 1][2] == tool[backward][6])//극이 같다면 회전 하지않음
+                {
+                    backward = 5;
+                }
+                else //극이 다르다면요
+                {
+                    total_dir[backward] = -total_dir[backward - 1];
+                }
+            }
+        }
+        for (int j = 0; j < 4; j++)
+        {
+            rotate(j, total_dir[j]);
+        }
+        fill(total_dir, total_dir + 4, 0);
+    }
+    output();
+    return 0;
+}
