@@ -1,0 +1,54 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+vector<int>arr;
+int n;
+int cnt=0;
+int check=0;
+int main()
+{
+  cin>>n;
+  for(int i=0;i<n;i++)
+  {
+    int m;
+    cin>>m;
+    arr.push_back(m);
+    if(m==0)
+    {
+        check++;
+    }
+  }
+  if(check==n)
+  {
+    cout<<n<<endl;
+  }
+  else
+  {
+  sort(arr.begin(),arr.end());
+  for(int i=0;i<arr.size();i++)
+  {
+      int a=arr[i];//좋다인지 학인할 수
+      for(int j=0;j<arr.size();j++)
+      {
+        if(j!=i)
+       {
+         int b=arr[j];
+         int idx=(lower_bound(arr.begin(),arr.end(),a-b)-arr.begin());
+         if(idx!=j&&idx!=i)
+         {
+            int match=arr[idx]+arr[j];
+            if(match==arr[i])
+            {
+                //cout<<i<<" "<<j<<" "<<idx<<" "<<endl;
+                cnt++;
+                break;
+            }
+         }
+       }    
+    }
+  }
+  cout<<cnt<<endl;
+  }
+  return 0;
+}
