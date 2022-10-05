@@ -1,0 +1,34 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+vector<int>arr;
+int n,m;
+int ans=0;
+int main()
+{
+    cin>>n>>m;
+    for(int i=0;i<n;i++)
+    {
+      int a;
+      cin>>a;
+      arr.push_back(a);
+    }
+    int start=0;
+    int end=0;
+    int sum=0;
+    while(1)
+    {
+      if(end==n&&sum<m)break;
+      else if(sum<m)
+      {
+        sum+=arr[end++];
+      }
+      else if(sum>=m)
+      {
+        if(sum==m)ans++;
+        sum-=arr[start++];
+      }
+    }
+    cout<<ans<<endl;
+    return 0;
+}
