@@ -17,15 +17,15 @@ int main()
     cin >> n;
     for (int i = 1; i <= n; i++)
     {
-        cin >> weight[i];//√ﬂ¿« π´∞‘
+        cin >> weight[i];//Ï∂îÏùò Î¨¥Í≤å
     }
     cin >> m;
     for (int i = 1; i <= m; i++)
     {
-        cin >> marble[i];//±∏ΩΩ¿« π´∞‘
+        cin >> marble[i];//Íµ¨Ïä¨Ïùò Î¨¥Í≤å
     }
-    dp[1][weight[1]] = 1;//√ ±‚»≠∏¶ «ÿ¡‹
-    for (int i = 2; i <= n; i++)//dp∏¶ √§øˆ ≥™∞°∏È µ 
+    dp[1][weight[1]] = 1;//Ï¥àÍ∏∞ÌôîÎ•º Ìï¥Ï§å
+    for (int i = 2; i <= n; i++)//dpÎ•º Ï±ÑÏõå ÎÇòÍ∞ÄÎ©¥ Îê®
     {
         for (int j = 1; j <= 40000; j++)
         {
@@ -53,7 +53,7 @@ int main()
     }
 
     /*
-     for (int i = 1; i <= n; i++)//dp∏¶ √§øˆ ≥™∞°∏È µ 
+     for (int i = 1; i <= n; i++)//dpÎ•º Ï±ÑÏõå ÎÇòÍ∞ÄÎ©¥ Îê®
     {
         for (int j = 1; j <= 15; j++)
         {
