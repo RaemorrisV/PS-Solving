@@ -8,40 +8,20 @@ int MAX = 0;
 bool flag;
 bool compare(int a, int b)
 {
-    if (a > b)return true;
+    if (a > b)
+        return true;
     return false;
 }
 int main()
 {
-    ios::sync_with_stdio(false); cin.tie(NULL);
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
     cin >> n;
     for (int i = 0; i < n; i++)
     {
         cin >> arr[i];
     }
-    for (int i = n - 1; i > 0; i--)
-    {
-        if (arr[i - 1] > arr[i])
-        {
-            int index;
-            for (int j = i; j < n; j++)
-            {
-                if (arr[i - 1] > arr[j])
-                {
-                    MAX = max(MAX, arr[j]);
-                    if (MAX == arr[j])
-                    {
-                        index = j;
-                    }
-                }
-            }
-            swap(arr[index], arr[i - 1]);
-            sort(arr + i, arr + n, compare);
-            flag = true;
-            break;
-        }
-    }
-    if (flag)
+    if (prev_permutation(arr, arr + n))
     {
         for (int i = 0; i < n; i++)
         {
