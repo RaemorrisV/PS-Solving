@@ -19,7 +19,7 @@ int main()
     sort(star.begin(), star.end());
     for (int i = 0; i < k; i++)
     {
-        for (int j = 0; j < k; j++)
+        for (int j = i; j < k; j++)
         {
             for (int a = 0; a < k; a++)
             {
