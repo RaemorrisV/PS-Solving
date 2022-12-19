@@ -25,11 +25,11 @@ int main()
             int p = ((y + mid) * 100 / (x + mid));
             if (per >= p)
             {
-                ans = mid + 1;
                 s = mid + 1;
             }
             else
             {
+                ans = mid;
                 e = mid - 1;
             }
         }
