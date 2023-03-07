@@ -1,97 +1,121 @@
 #include <iostream>
 #include <queue>
-#include <climits>
-#include <algorithm>
 #include <vector>
+#include <algorithm>
+#define INF 10002
 using namespace std;
 
 int w, h;
-int cnt[101][101];
-vector<pair<int, int>> raiser;
-string in;
-int dx[4] = {-1, 1, 0, 0}; //ìƒ í•˜ ì¢Œ ìš°
-int dy[4] = {0, 0, -1, 1};
 char map[101][101];
-struct info
-{
-    int x;
-    int y;
-    int dir;
-    int dis;
-};
+int dis[101][101][4];
+int dx[4] = { -1,0,1,0 }; // »ó ¿ì ÇÏ ÁÂ
+int dy[4] = { 0,1,0,-1 };
+//dir 0 »ó 1 ¿ì 2 ÇÏ 3 ÁÂ
+int ans = INF;
+vector<pair<int, int>>c_idx;
 bool valide(int r, int c)
 {
-    if (r >= 1 && r <= h && c >= 1 && c <= w)
-        return true;
-    return false;
+	if (r >= 1 && r <= h && c >= 1 && c <= w)return true;
+	return false;
 }
-struct compare
-{
-    bool operator()(info a, info b)
-    {
-        return a.dis > b.dis;
-    }
+struct info {
+	int x;
+	int y;
+	int dir;
+	int val;
 };
-void bfs(int s, int e)
+struct compare {
+	bool operator()(info a, info b)
+	{
+		return a.val > b.val;
+	}
+};
+void dijkstra(int r, int c)
 {
-    priority_queue<info, vector<info>, compare> q;
-    cnt[s][e] = 0;
-    for (int i = 0; i < 4; i++)
-    {
-        q.push({raiser[0].first, raiser[0].second, i, 0});
-    }
-    while (!q.empty())
-    {
-        int cur_r = q.top().x;
-        int cur_c = q.top().y;
-        int cur_d = q.top().dir;
-        int cur_dis = q.top().dis;
-        q.pop();
-        for (int i = 0; i < 4; i++)
-        {
-            int nx = cur_r + dx[i];
-            int ny = cur_c + dy[i];
-            if (valide(nx, ny) && map[nx][ny] != '*')
-            {
-                if (cur_d != i)
-                {
-                    if (cnt[nx][ny] >= cur_dis + 1)
-                    {
-
-                        cnt[nx][ny] = cur_dis + 1;
-                        q.push({nx, ny, i, cnt[nx][ny]});
-                    }
-                }
-                else
-                {
-                    if (cnt[nx][ny] >= cur_dis)
-                    {
-                        cnt[nx][ny] = cur_dis;
-                        q.push({nx, ny, i, cnt[nx][ny]});
-                    }
-                }
-            }
-        }
-    }
+	priority_queue<info, vector<info>, compare>pq;
+	for (int i = 0; i < 4; i++)
+	{
+		pq.push({ r,c,i,0 });
+		dis[r][c][i] = 0;
+	}
+	while (!pq.empty())
+	{
+		int cur_r = pq.top().x;
+		int cur_c = pq.top().y;
+		int cur_val = pq.top().val;
+		int cur_dir = pq.top().dir;
+		pq.pop();
+		if (cur_val > dis[cur_r][cur_c][cur_dir])continue;
+		for (int i = 0; i < 4; i++)
+		{
+			if ((cur_dir + 2) % 4 == i)continue;
+			int nx = cur_r + dx[i];
+			int ny = cur_c + dy[i];
+			if (valide(nx, ny) && map[nx][ny] != '*')
+			{
+				if (cur_dir == i) //°°Àº ¹æÇâÀ¸·Î °¥‹š
+				{
+					if (dis[nx][ny][i] > dis[cur_r][cur_c][i])
+					{
+						dis[nx][ny][i] = dis[cur_r][cur_c][i];
+						pq.push({ nx,ny,i,dis[nx][ny][i]});
+					}
+				}
+				else //´Ù¸¥ ¹æÇâÀ¸·Î°¡¼­ °Å¿ïÀ» Ãß°¡ÇØ¾ßÇÒ¶§
+				{
+					if (dis[nx][ny][i] > dis[cur_r][cur_c][cur_dir] + 1)
+					{
+						dis[nx][ny][i] = dis[cur_r][cur_c][cur_dir] + 1;
+						pq.push({ nx,ny,i,dis[nx][ny][i]});
+					}
+				}
+			}
+		}
+	}
 }
 int main()
 {
-    ios::sync_with_stdio(false); cin.tie(NULL);
-    cin >> w >> h;
-    for (int i = 1; i <= h; i++)
-    {
-        cin >> in;
-        for (int j = 1; j <= w; j++)
-        {
-            map[i][j] = in[j - 1];
-            if (map[i][j] == 'C')
-            {
-                raiser.push_back({i, j});
-            }
-        }
-    }
-    fill(&cnt[0][0], &cnt[100][101], INT_MAX);
-    bfs(raiser[0].first, raiser[0].second);
-    cout << cnt[raiser[1].first][raiser[1].second] << '\n';
-    return 0;
+	ios::sync_with_stdio(false); cin.tie(NULL);
+	cin >> w >> h;//¿­ Çà
+	for (int i = 1; i <= 100; i++)
+	{
+		for (int j = 1; j <= 100; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				dis[i][j][k] = INF;
+			}
+		}
+	}
+	for (int i = 1; i <= h; i++)
+	{
+		string input;
+		cin >> input;
+		for (int j = 1; j <= w; j++)
+		{
+			map[i][j] = input[j - 1];
+			if (map[i][j] == 'C')c_idx.push_back({ i,j });
+		}
+	}
+	dijkstra(c_idx[0].first, c_idx[0].second);
+	for (int i = 0; i < 4; i++)
+	{
+		ans = min(dis[c_idx[1].first][c_idx[1].second][i], ans);
+	}
+	cout << ans << '\n';
+	/*
+	for (int i = 1; i <= h; i++)
+	{
+		for (int j = 1; j <= w; j++)
+		{
+			for (int k = 0; k < 4; k++)
+			{
+				cout << dis[i][j][k] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+	*/
+	return 0;
 }
